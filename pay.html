@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran Web Member UMKM - MemberPoint Pro</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            /* Warna latar belakang gelap */
+            color: #e2e8f0;
+            /* Warna teks terang */
+        }
+
+        /* Custom styling for steps if needed */
+        .step-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            height: 24px;
+            width: 24px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            /* text-sm */
+        }
+
+        /* Gaya untuk membungkus QR Code dengan border yang lebih menarik */
+        .qr-frame {
+            padding: 16px;
+            /* Padding di sekitar QR */
+            background: linear-gradient(135deg, #4c1d95 0%, #1e40af 100%);
+            /* Border gradient background */
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 0 3px #4c1d95;
+            /* Bayangan dan sedikit highlight */
+        }
+
+        /* Gaya untuk QR code di dalam frame */
+        .qr-image {
+            display: block;
+            background-color: white;
+            padding: 8px;
+            /* Padding di dalam border frame */
+            border-radius: 8px;
+        }
+
+        /* Animasi Gradient untuk Latar Belakang Harga */
+        @keyframes animated-gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animated-price-gradient {
+            background-size: 200% 200%;
+            animation: animated-gradient 5s ease infinite;
+        }
+
+        /* ── MOBILE FIX ── */
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .qr-frame {
+                padding: 10px;
+            }
+
+            .qr-image {
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center px-2 py-4 sm:p-4">
+
+    <div class="w-full max-w-lg bg-slate-800 rounded-xl shadow-2xl px-3 py-4 sm:p-6 md:p-8 border border-slate-700">
+
+        <!-- Header Section -->
+        <header class="text-center mb-5">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 mb-2">
+                <!-- QRIS Logo -->
+                <div class="text-2xl sm:text-3xl font-extrabold text-blue-400">QRIS</div>
+                <h1 class="text-lg sm:text-2xl font-bold text-slate-100 leading-tight">Pembayaran Utilitas Nasional</h1>
+            </div>
+            <p class="text-sm text-slate-300 font-semibold mt-2">
+                <span class="text-green-400">HEMAT BESAR!</span> Dapatkan DISKON KHUSUS SEKARANG sebelum waktu habis.
+            </p>
+        </header>
+
+        <!-- QR Code Display Section -->
+        <section class="mb-6">
+            <div class="bg-white/10 p-3 sm:p-5 rounded-lg shadow-inner shadow-slate-900/50">
+                <div class="text-center mb-3">
+                    <p class="text-slate-400 font-medium">Tujuan Pembayaran QRIS:</p>
+                    <p class="text-slate-100 text-xl font-extrabold leading-tight">LANDAIPROJECT</p>
+                    <p class="text-slate-400 text-xs mt-1">NMID: ID1025389039955</p>
+                    <p class="text-yellow-300 text-sm font-bold mt-1">🛒 Produk: Web Member UMKM (Paket Lengkap)</p>
+                </div>
+
+                <!-- Frame/Border QR Code -->
+                <div class="qr-frame w-full mx-auto" style="max-width:100%;box-sizing:border-box">
+                    <!-- Gambar QR -->
+                    <img src="https://raw.githubusercontent.com/Landaipoject/landaipoject.github.io/main/pay/QR1.jpg"
+                        alt="QR Code QRIS untuk Pembayaran Utilitas" class="qr-image w-full h-auto rounded-lg"
+                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1e293b/94a3b8?text=QRIS+Gagal+Dimuat';" />
+                </div>
+
+                <!-- Pesan informasi QR -->
+                <p class="text-center text-xs text-slate-400 mt-4">
+                    Pastikan nama dan NMID di atas sudah benar sebelum melakukan pembayaran.
+                </p>
+            </div>
+        </section>
+
+        <!-- === HARGA DINAMIS (SLOT PROMO) === -->
+        <section
+            class="text-center mb-6 bg-slate-700/50 p-4 sm:p-6 rounded-xl border border-purple-500/30 shadow-lg shadow-purple-900/30"
+            id="price-section">
+
+            <!-- Loader sementara fetch config -->
+            <div id="price-loading" class="py-8">
+                <div
+                    class="inline-block w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mb-3">
+                </div>
+                <p class="text-slate-400 text-sm">Memuat info harga...</p>
+            </div>
+
+            <!-- Konten harga (tampil setelah fetch) -->
+            <div id="price-content" style="display:none">
+
+                <!-- Badge slot / habis -->
+                <div class="flex justify-center mb-3">
+                    <div id="slot-badge" style="display:none">
+                        <span
+                            class="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-xs font-extrabold px-4 py-1.5 rounded-full tracking-wide">
+                            <span class="w-2 h-2 rounded-full bg-yellow-400 inline-block"
+                                style="animation:ping 1.2s ease infinite"></span>
+                            <span id="slot-count-text">10 SLOT TERSISA</span>
+                        </span>
+                    </div>
+                    <div id="slot-habis-badge" style="display:none">
+                        <span
+                            class="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-extrabold px-4 py-1.5 rounded-full">
+                            🔒 SLOT PROMO HABIS
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Judul -->
+                <h2 class="text-lg sm:text-xl font-bold text-white mb-3" id="price-title">Harga Promo Terbatas! 🔥</h2>
+
+                <!-- Countdown Timer -->
+                <div id="countdown-wrap" class="mb-4">
+                    <p class="text-xs text-yellow-300 uppercase tracking-widest mb-2">Penawaran Berakhir Dalam</p>
+                    <div id="countdown-timer"
+                        class="text-3xl sm:text-4xl font-mono font-extrabold tracking-widest bg-black/30 rounded-lg inline-block px-4 py-2 border-2 border-slate-600 text-white">
+                        09:00
+                    </div>
+                </div>
+
+                <!-- Harga -->
+                <div class="flex flex-col items-center gap-1 my-4">
+                    <span id="harga-coret" class="text-base text-slate-400 line-through" style="display:none"></span>
+                    <span id="harga-tampil"
+                        class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-cyan-400"></span>
+                </div>
+
+                <!-- Progress bar slot -->
+                <div id="slot-progress-wrap" class="mb-5 px-2">
+                    <div class="w-full bg-slate-600/50 rounded-full h-2 overflow-hidden">
+                        <div id="slot-progress-bar"
+                            class="h-2 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-700"
+                            style="width:0%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-400 mt-1.5">
+                        <span id="slot-terjual-text">0 terjual</span>
+                        <span id="slot-sisa-text">10 tersisa dari 10</span>
+                    </div>
+                </div>
+
+                <!-- Tombol WA -->
+                <a id="whatsapp-link" href="#" target="_blank"
+                    class="inline-flex items-center justify-center w-full px-6 py-3.5 text-base font-bold text-white bg-green-600 rounded-xl shadow-lg shadow-green-700/40 hover:bg-green-700 transition-all duration-300 transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 flex-shrink-0" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path
+                            d="M12.04 2C6.58 2 2.13 6.45 2.13 12c0 1.77.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zM9.51 17.13c-.27-.14-1.59-.78-1.82-.87-.22-.09-.39-.14-.55.14-.17.28-.69.87-.84 1.04-.15.17-.3.19-.55.05-.25-.14-1.06-.39-2-1.23-.74-.66-1.23-1.48-1.38-1.72-.14-.25-.03-.38.12-.51.14-.12.28-.3.42-.46.1-.12.17-.2.25-.34.08-.14.04-.27-.02-.38-.06-.1-.55-1.32-.75-1.82-.2-.49-.4-.42-.55-.43h-.48c-.14 0-.38.05-.55.23-.17.17-.68.66-.68 1.61 0 .94.69 1.87.79 2s1.38 2.11 3.35 2.96c.49.21.88.33 1.18.42.48.14.91.12 1.26.07.39-.05 1.18-.48 1.34-.94.17-.46.17-.85.12-.94-.05-.09-.17-.14-.38-.24z" />
+                    </svg>
+                    Konfirmasi Pembayaran via WhatsApp
+                </a>
+                <p class="text-xs text-slate-400 mt-3">
+                    *Pastikan nominal transfer tepat <strong id="nominal-konfirmasi" class="text-slate-200">—</strong>
+                    agar mudah diverifikasi.
+                </p>
+
+            </div>
+        </section>
+        <!-- === AKHIR HARGA DINAMIS ===-->
+
+
+        <!-- Payment Instructions -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-slate-100 mb-4 border-b border-slate-700 pb-2">Langkah Konfirmasi
+                Pembayaran:</h2>
+            <ol class="space-y-3 text-slate-300 text-sm">
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-indigo-600 text-white flex-shrink-0">1</span>
+                    <span>Scan QRIS di atas dengan nominal <strong id="nominal-scan"
+                            class="text-white">—</strong>.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-indigo-600 text-white flex-shrink-0">2</span>
+                    <span>Screenshot bukti transfer yang berhasil.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-green-600 text-white flex-shrink-0">3</span>
+                    <span>Klik tombol <strong class="text-white">"Konfirmasi Pembayaran via WhatsApp"</strong> dan kirim
+                        bukti transfer.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-purple-600 text-white flex-shrink-0">4</span>
+                    <span>Web member toko Anda akan diproses dalam <strong class="text-white">1–3 jam</strong> setelah
+                        konfirmasi diterima.</span>
+                </li>
+            </ol>
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="text-center pt-4 border-t border-slate-700/50">
+            <a href="https://landaiproject.github.io/"
+                class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors duration-200 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Kembali ke Beranda
+            </a>
+            <p class="text-xs text-slate-500">
+                Diberdayakan oleh QRIS Standar Pembayaran Nasional (GPN).
+            </p>
+        </footer>
+
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmsF3nAYpLI9lG8NaVSBsEB7Q0Vto4Cl5qfpGTchzytVz1OZ9Y7t9OT8ptk2OVOhBFHg/exec';
+
+            const adminWA = '6282130254362';
+            const affiliateData = {
+                'AFF001': '6281578224054',
+                'AFF002': '628997253924',
+                'AFF003': '628815789030',
+                'AFF004': '6285733551931',
+                'AFF005': '6285784755310',
+            };
+
+            function formatRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
+            function getTargetWA() {
+                let affiliateId = localStorage.getItem('viralizer_affiliate_id');
+                if (!affiliateId) {
+                    const p = new URLSearchParams(window.location.search);
+                    affiliateId = p.get('ref') || p.get('aff') || p.get('affiliate');
+                    if (affiliateId) localStorage.setItem('viralizer_affiliate_id', affiliateId);
+                }
+                affiliateId = affiliateId ? affiliateId.trim() : '';
+                return { wa: affiliateData[affiliateId] || adminWA, id: affiliateId };
+            }
+
+            function buildWALink(harga) {
+                const { wa, id } = getTargetWA();
+                const h = Number(harga).toLocaleString('id-ID');
+                const msg = `Halo%20kak%2C%20saya%20sudah%20transfer%20Rp%20${h}%20untuk%20Web%20Member%20UMKM%20(Paket%20Lengkap)%20ke%20QRIS%20LANDAIPROJECT%20NMID%3A%20ID1025389039955.%20Ini%20bukti%20transfernya%20%5BLAMPIRKAN%20FOTO%5D%20🙏`;
+                const aff = id ? `%0AAffiliate+ID%3A+${encodeURIComponent(id)}` : '';
+                return `https://wa.me/${wa}?text=${msg}${aff}`;
+            }
+
+            function applyConfig(cfg) {
+                const slotSisa = Math.max(0, cfg.slot_total - cfg.slot_terpakai);
+                const promoOn = cfg.promo_aktif && slotSisa > 0;
+                const harga = promoOn ? cfg.harga_promo : cfg.harga_normal;
+                const pct = cfg.slot_total > 0 ? Math.min(100, (cfg.slot_terpakai / cfg.slot_total) * 100) : 0;
+
+                document.getElementById('harga-tampil').textContent = formatRp(harga);
+
+                const coretEl = document.getElementById('harga-coret');
+                if (promoOn) { coretEl.textContent = formatRp(cfg.harga_normal); coretEl.style.display = ''; }
+                else { coretEl.style.display = 'none'; }
+
+                const slotBadge = document.getElementById('slot-badge');
+                const slotHabisBadge = document.getElementById('slot-habis-badge');
+                const priceTitle = document.getElementById('price-title');
+                const countdownWrap = document.getElementById('countdown-wrap');
+                const progWrap = document.getElementById('slot-progress-wrap');
+
+                if (promoOn) {
+                    slotBadge.style.display = 'block';
+                    slotHabisBadge.style.display = 'none';
+                    document.getElementById('slot-count-text').textContent = slotSisa + ' SLOT TERSISA';
+                    priceTitle.textContent = 'Harga Promo Terbatas! 🔥';
+                    if (countdownWrap) countdownWrap.style.display = '';
+                } else {
+                    slotBadge.style.display = 'none';
+                    slotHabisBadge.style.display = (cfg.promo_aktif && slotSisa <= 0) ? 'block' : 'none';
+                    priceTitle.textContent = 'Harga Normal';
+                    if (countdownWrap) countdownWrap.style.display = 'none';
+                }
+
+                if (cfg.promo_aktif && cfg.slot_total > 0) {
+                    progWrap.style.display = '';
+                    document.getElementById('slot-progress-bar').style.width = pct + '%';
+                    document.getElementById('slot-terjual-text').textContent = cfg.slot_terpakai + ' terjual';
+                    document.getElementById('slot-sisa-text').textContent = slotSisa + ' tersisa dari ' + cfg.slot_total;
+                } else {
+                    progWrap.style.display = 'none';
+                }
+
+                const nomStr = formatRp(harga);
+                const nomKEl = document.getElementById('nominal-konfirmasi');
+                const nomSEl = document.getElementById('nominal-scan');
+                if (nomKEl) nomKEl.textContent = nomStr;
+                if (nomSEl) nomSEl.textContent = nomStr;
+                document.getElementById('whatsapp-link').href = buildWALink(harga);
+            }
+
+            const fallbackConfig = { harga_normal: 550000, harga_promo: 99000, slot_total: 10, slot_terpakai: 0, promo_aktif: true };
+
+            function showPriceContent(cfg) {
+                document.getElementById('price-loading').style.display = 'none';
+                document.getElementById('price-content').style.display = '';
+                applyConfig(cfg);
+            }
+
+            // ── COUNTDOWN TIMER (deklarasi lebih awal agar bisa dipakai oleh fetchConfig) ──
+            const countdownEl = document.getElementById('countdown-timer');
+            const TIMER_DURATION = 9 * 60; // 9 menit
+            const TIMER_KEY = 'qris_countdown_end';
+            let timerInterval = null;
+
+            function startTimer() {
+                if (!countdownEl) return;
+                // Bersihkan interval lama dulu
+                if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+
+                let endTime;
+                const stored = localStorage.getItem(TIMER_KEY);
+                if (stored) {
+                    endTime = parseInt(stored, 10);
+                    // Kalau expiry di masa lalu atau hampir habis → buat baru
+                    if (endTime <= Date.now()) {
+                        endTime = Date.now() + TIMER_DURATION * 1000;
+                        localStorage.setItem(TIMER_KEY, endTime);
+                    }
+                } else {
+                    endTime = Date.now() + TIMER_DURATION * 1000;
+                    localStorage.setItem(TIMER_KEY, endTime);
+                }
+
+                function tick() {
+                    const rem = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+                    const m = String(Math.floor(rem / 60)).padStart(2, '0');
+                    const s = String(rem % 60).padStart(2, '0');
+                    countdownEl.textContent = `${m}:${s}`;
+
+                    if (rem < 60) {
+                        countdownEl.style.color = '#f87171'; // merah
+                    } else {
+                        countdownEl.style.color = '';
+                    }
+
+                    // Saat habis → reset langsung, mulai lagi dari nol
+                    if (rem <= 0) {
+                        localStorage.removeItem(TIMER_KEY);
+                        // Tunda sebentar supaya user lihat 00:00, lalu mulai ulang
+                        setTimeout(startTimer, 800);
+                    }
+                }
+                tick();
+                timerInterval = setInterval(tick, 1000);
+            }
+
+            // ── FETCH CONFIG (dengan cache-busting) ──────────────────
+            async function fetchConfig() {
+                if (!SCRIPT_URL) { showPriceContent(fallbackConfig); startTimer(); return; }
+                try {
+                    // Tambah timestamp agar browser tidak cache response lama
+                    const resp = await fetch(SCRIPT_URL + '?action=getConfig&t=' + Date.now());
+                    const data = await resp.json();
+                    showPriceContent(data);
+                    if (data.promo_aktif && (data.slot_total - data.slot_terpakai) > 0) startTimer();
+                } catch (e) {
+                    showPriceContent(fallbackConfig);
+                    startTimer();
+                }
+            }
+
+            // ── INIT ──────────────────────────────────────────────
+            fetchConfig();
+        });
+    </script>
+</body>
+
+</html>
