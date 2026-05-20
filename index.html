@@ -3,193 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - VIP Props Injector | TempoyakID</title>
+    <title>VIP Props Injector - TempoyakID</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
         
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1a1f35 50%, #0f172a 100%);
             background-attachment: fixed;
+            overflow-x: hidden;
         }
 
-        .glass-effect {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+        /* === QR Frame Styling (dari pay.html) === */
+        .qr-frame {
+            padding: 16px;
+            background: linear-gradient(135deg, #4c1d95 0%, #1e40af 100%);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 0 3px #4c1d95;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .qr-frame:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 0 3px #7c3aed;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .qr-image {
+            display: block;
+            background-color: white;
+            padding: 8px;
+            border-radius: 8px;
+            width: 100%;
+            height: auto;
+        }
+
+        .step-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            height: 28px;
+            width: 28px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.875rem;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .animate-slide-up {
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .animate-spin-custom {
+        .animate-spin {
             animation: spin 1s ease-in-out infinite;
         }
 
-        .file-upload-container input[type="file"] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
+        @media (max-width: 640px) {
+            .qr-frame {
+                padding: 10px;
+            }
 
-        .input-focus:focus {
-            @apply border-blue-500 ring-4 ring-blue-500/20;
-        }
-
-        .btn-shine {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-shine:hover::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shine 0.5s;
-        }
-
-        @keyframes shine {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .radial-gradient-top {
-            background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
-        }
-
-        .radial-gradient-bottom {
-            background: radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+            .qr-image {
+                padding: 5px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
+<body class="min-h-screen flex items-center justify-center px-2 py-4 sm:p-4">
 
-<!-- Background Decorations -->
-<div class="fixed inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-0 left-0 w-96 h-96 radial-gradient-top blur-3xl"></div>
-    <div class="absolute bottom-0 right-0 w-96 h-96 radial-gradient-bottom blur-3xl"></div>
-</div>
+    <div class="w-full max-w-lg bg-slate-800 rounded-xl shadow-2xl px-3 py-4 sm:p-6 md:p-8 border border-slate-700">
 
-<div class="w-full max-w-md relative z-10">
-    <!-- Main Card -->
-    <div class="glass-effect border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl animate-slide-up">
-        
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="gradient-text text-3xl md:text-4xl font-bold mb-2">VIP Props Injector</h1>
-            <p class="text-slate-400 text-sm md:text-base">Senjata Pamungkas Tembus Anti-Fraud</p>
-            
-            <!-- Price Tag -->
-            <div class="inline-block mt-4 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/30 font-semibold text-lg hover:bg-emerald-500/30 transition-colors">
+        <!-- Header Section -->
+        <header class="text-center mb-6">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-100 leading-tight mb-2">VIP Props Injector</h1>
+            <p class="text-sm text-slate-300 font-semibold">Senjata Pamungkas Tembus Anti-Fraud</p>
+            <div class="inline-block mt-4 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/30 font-semibold text-base">
                 Rp 55.000
             </div>
-        </div>
+        </header>
 
-        <!-- Info Section -->
-        <div class="mb-8 space-y-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6 md:p-7">
-            <!-- Highlight Box 1 -->
-            <div class="space-y-3">
-                <h3 class="flex items-center gap-2 text-white font-bold text-base md:text-lg">
+        <!-- Info Section (diperbaiki) -->
+        <section class="mb-6 bg-white/10 p-4 sm:p-6 rounded-lg shadow-inner shadow-slate-900/50 space-y-4">
+            <!-- Info Box 1 -->
+            <div class="space-y-2">
+                <h3 class="flex items-center gap-2 text-white font-bold text-base">
                     <span class="text-xl">🔥</span> Mengapa Dibatasi?
                 </h3>
-                <p class="text-slate-300 text-xs md:text-sm leading-relaxed">
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed pl-8">
                     Banyak yang penasaran tentang props premium yang TempoyakID gunakan. Dengan segala hormat, props eksklusif ini tidak dapat dibuka untuk publik luas. 😅 Mengingat sifatnya yang sangat privat dan sensitif, apabila terlalu banyak pengguna akan mempercepat deteksi sistem dan berisiko server shutdown.
                 </p>
             </div>
 
-            <!-- Highlight Box 2 -->
-            <div class="space-y-3 border-t border-blue-500/20 pt-4">
-                <h3 class="flex items-center gap-2 text-white font-bold text-base md:text-lg">
+            <!-- Divider -->
+            <div class="border-t border-slate-600/30"></div>
+
+            <!-- Info Box 2 -->
+            <div class="space-y-2">
+                <h3 class="flex items-center gap-2 text-white font-bold text-base">
                     <span class="text-xl">⚙️</span> Kompatibilitas Modul
                 </h3>
-                <p class="text-slate-300 text-xs md:text-sm leading-relaxed">
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed pl-8">
                     Modul injek props ini dapat diintegrasikan dengan modul-modul lainnya untuk hasil maksimal. Pastikan konfigurasi diatur seoptimal mungkin untuk menyembunyikan APK agar tidak terdeteksi sistem root. Setup yang sempurna = performa terbaik. 💪
                 </p>
             </div>
 
-            <!-- Highlight Box 3 -->
-            <div class="space-y-3 border-t border-blue-500/20 pt-4 bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/20">
-                <h3 class="flex items-center gap-2 text-emerald-400 font-bold text-base md:text-lg">
+            <!-- Price Box -->
+            <div class="border-t border-slate-600/30 pt-4 bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/20">
+                <h3 class="flex items-center gap-2 text-emerald-400 font-bold text-base">
                     <span class="text-xl">💰</span> Investasi Terjangkau
                 </h3>
-                <p class="text-slate-300 text-xs md:text-sm leading-relaxed">
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed pl-8 mt-2">
                     Hanya <span class="text-emerald-400 font-bold">Rp 55.000</span> untuk ganti kopi dan waktu setup kami. ☕😄
                 </p>
             </div>
+        </section>
 
-            <!-- Call to Action -->
-            <div class="text-center pt-2 text-slate-400 text-xs md:text-sm italic">
-                😅 Buruan daftar sebelum harga kopinya naik… (kidding! 😉)
+        <!-- QR Code Display Section -->
+        <section class="mb-6">
+            <div class="text-center mb-4">
+                <p class="text-slate-400 font-medium text-sm">Tujuan Pembayaran QRIS:</p>
+                <p class="text-slate-100 text-lg font-extrabold">TempoyakID</p>
             </div>
-        </div>
 
-        <!-- QRIS Section -->
-        <div class="bg-black/20 border border-dashed border-white/10 rounded-2xl p-6 md:p-8 mb-8">
-            <!-- ABANG TINGGAL GANTI NAMA FILE GAMBAR QRIS DI SINI -->
-            <div class="w-48 h-48 mx-auto mb-4 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow-lg">
-                <img src="gambar_qris_abang.jpg" alt="Scan QRIS" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"text-gray-500 text-center font-semibold\">[ Ganti dengan Gambar QRIS ]</div>'">
+            <!-- QR Frame -->
+            <div class="qr-frame w-full mx-auto" style="max-width:100%; box-sizing:border-box;">
+                <img src="https://raw.githubusercontent.com/Tempoyakpay/Tempoyakpay.github.io/main/QRTempoyak.jpg" 
+                    alt="QR Code QRIS TempoyakID" 
+                    class="qr-image rounded-lg"
+                    onerror="this.onerror=null; this.src='https://placehold.co/300x300/1e293b/94a3b8?text=QR+Gagal+Dimuat';" />
             </div>
-            <p class="text-slate-400 text-xs md:text-sm text-center">Scan QRIS di atas untuk melakukan pembayaran. Pastikan nominal sesuai.</p>
-        </div>
+
+            <!-- Info Text -->
+            <p class="text-center text-xs text-slate-400 mt-4">
+                Scan QRIS di atas untuk melakukan pembayaran. Pastikan nominal transfer <strong class="text-slate-200">Rp 55.000</strong> sesuai.
+            </p>
+        </section>
+
+        <!-- Payment Instructions -->
+        <section class="mb-8">
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-100 mb-4 border-b border-slate-700 pb-2">Langkah Konfirmasi Pembayaran:</h2>
+            <ol class="space-y-3 text-slate-300 text-xs sm:text-sm">
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-blue-600 text-white flex-shrink-0 mt-0.5">1</span>
+                    <span>Scan QRIS di atas dengan nominal <strong class="text-white">Rp 55.000</strong>.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-blue-600 text-white flex-shrink-0 mt-0.5">2</span>
+                    <span>Isi form dengan nama lengkap dan username Telegram Anda.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-blue-600 text-white flex-shrink-0 mt-0.5">3</span>
+                    <span>Upload screenshot/foto bukti pembayaran Anda.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-blue-600 text-white flex-shrink-0 mt-0.5">4</span>
+                    <span>Klik tombol <strong class="text-white">"Kirim Konfirmasi"</strong> untuk mengirim bukti transfer.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="step-badge bg-green-600 text-white flex-shrink-0 mt-0.5">5</span>
+                    <span>Admin akan langsung menghubungi Anda melalui Telegram setelah verifikasi bukti transfer.</span>
+                </li>
+            </ol>
+        </section>
 
         <!-- Form -->
-        <form id="paymentForm" class="space-y-6">
+        <form id="paymentForm" class="space-y-4 mb-6">
             
             <!-- Nama Lengkap -->
             <div>
-                <label class="block text-slate-300 text-sm font-semibold mb-2">Nama Lengkap</label>
+                <label class="block text-slate-300 text-xs sm:text-sm font-semibold mb-2">Nama Lengkap</label>
                 <input 
                     type="text" 
                     id="buyerName" 
-                    class="input-focus w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none transition-all duration-300" 
+                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300" 
                     placeholder="Masukkan nama Anda" 
                     required>
             </div>
 
             <!-- Username Telegram -->
             <div>
-                <label class="block text-slate-300 text-sm font-semibold mb-2">Username Telegram</label>
+                <label class="block text-slate-300 text-xs sm:text-sm font-semibold mb-2">Username/ID Telegram</label>
                 <input 
                     type="text" 
                     id="buyerTelegram" 
-                    class="input-focus w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none transition-all duration-300" 
-                    placeholder="@username" 
+                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300" 
+                    placeholder="@username_tele atau chat ID" 
                     required>
             </div>
 
-            <!-- File Upload -->
+            <!-- File Upload - Bukti Pembayaran -->
             <div>
-                <label class="block text-slate-300 text-sm font-semibold mb-2">Bukti Transfer (Max 5MB)</label>
-                <div class="relative overflow-hidden bg-slate-900/50 border-2 border-dashed border-white/10 hover:border-blue-500/50 rounded-lg p-6 text-center cursor-pointer transition-all duration-300 file-upload-container group">
-                    <input type="file" id="paymentProof" accept="image/*" required>
+                <label class="block text-slate-300 text-xs sm:text-sm font-semibold mb-2">Bukti Transfer/Pembayaran (Max 5MB)</label>
+                <div class="relative overflow-hidden bg-slate-700/50 border-2 border-dashed border-slate-600/50 hover:border-blue-500/50 rounded-lg p-6 text-center cursor-pointer transition-all duration-300 group">
+                    <input type="file" id="paymentProof" accept="image/*" required class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer">
                     <div id="fileHint" class="text-slate-400 text-sm group-hover:text-blue-400 transition-colors">
-                        📄 Klik untuk Upload Gambar Bukti
+                        📄 Klik untuk Upload Screenshot Bukti Pembayaran
                     </div>
                     <div id="fileName" class="mt-2 text-xs text-blue-400 break-all font-medium"></div>
                 </div>
@@ -199,9 +207,9 @@
             <button 
                 type="submit" 
                 id="submitBtn" 
-                class="btn-shine w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold rounded-lg transition-all duration-300 hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 disabled:shadow-none">
-                <span class="btn-text">Kirim Konfirmasi</span>
-                <div class="spinner hidden w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin-custom" id="btnSpinner"></div>
+                class="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 disabled:shadow-none">
+                <span class="btn-text">✓ Kirim Konfirmasi</span>
+                <div class="spinner hidden w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" id="btnSpinner"></div>
             </button>
 
             <!-- Status Message -->
@@ -212,18 +220,14 @@
 
     </div>
 
-    <!-- Footer Info -->
-    <div class="text-center mt-6 text-slate-500 text-xs">
-        <p>Transaksi Anda aman dan terenkripsi</p>
-    </div>
-</div>
-
 <script>
     // ==========================================
-    // KONFIGURASI BOT TELEGRAM (ISIKAN DI SINI!)
+    // ⚙️ KONFIGURASI BOT TELEGRAM ADMIN
     // ==========================================
-    const BOT_TOKEN = "ISI_TOKEN_BOT_ABANG_DISINI"; 
-    const CHAT_ID = "ISI_CHAT_ID_ABANG_DISINI";
+    // Bot untuk menerima notifikasi order ke Telegram ADMIN (Private)
+    const BOT_TOKEN = "8767094720:AAHVdYLHTQASKLm-RKU1PU0KUh_WZPsrW2U"; 
+    // Chat ID Telegram Admin (@Prtyygurlll)
+    const CHAT_ID = "839501967";
     // ==========================================
 
     const form = document.getElementById('paymentForm');
@@ -250,8 +254,8 @@
         e.preventDefault();
 
         // Validasi Config
-        if(BOT_TOKEN === "ISI_TOKEN_BOT_ABANG_DISINI" || CHAT_ID === "ISI_CHAT_ID_ABANG_DISINI") {
-            showStatus("❌ Error: Token Bot atau Chat ID belum disetting oleh Admin di dalam source code HTML.", "error");
+        if(BOT_TOKEN === "ISI_TOKEN_BOT_ABANG_DISINI") {
+            showStatus("❌ Error: Token Bot belum dikonfigurasi. Hubungi developer.", "error");
             return;
         }
 
@@ -270,8 +274,8 @@
         btnSpinner.classList.remove('hidden');
         statusBox.classList.add('hidden');
 
-        // Buat Caption
-        const caption = `🚀 *PESANAN VIP MASUK!*\n\n*Nama:* ${name}\n*Telegram:* ${telegram}\n*Status:* Menunggu Konfirmasi Bukti TF`;
+        // Buat Caption dengan data customer
+        const caption = `🚀 *PESANAN VIP PROPS MASUK!*\n\n*Nama:* ${name}\n*Telegram:* ${telegram}\n*Status:* ✓ Bukti Transfer Diterima`;
 
         // Siapkan Data (FormData karena mengirim file)
         const formData = new FormData();
@@ -289,19 +293,25 @@
             const result = await response.json();
 
             if (result.ok) {
-                showStatus("✅ Bukti berhasil dikirim! Silakan tunggu, Mimin akan segera menjapri Telegram Anda.", "success");
+                showStatus("✅ Bukti pembayaran berhasil dikirim! Silakan tunggu, admin akan segera menghubungi Anda melalui Telegram. Terima kasih! 🙏", "success");
                 form.reset();
                 fileNameDiv.textContent = '';
                 hintDiv.classList.remove('hidden');
+                
+                // Auto-reset form setelah 3 detik
+                setTimeout(() => {
+                    statusBox.classList.add('hidden');
+                }, 3000);
             } else {
                 showStatus(`❌ Gagal: ${result.description}`, "error");
             }
         } catch (error) {
-            showStatus(`❌ Terjadi kesalahan jaringan. Coba lagi.`, "error");
+            console.error('Error:', error);
+            showStatus(`❌ Terjadi kesalahan jaringan. Silakan coba lagi.`, "error");
         } finally {
             // Reset Button State
             submitBtn.disabled = false;
-            btnText.textContent = "Kirim Konfirmasi";
+            btnText.textContent = "✓ Kirim Konfirmasi";
             btnSpinner.classList.add('hidden');
         }
     });
